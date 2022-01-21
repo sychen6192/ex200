@@ -1,0 +1,210 @@
+﻿root 帳號密碼重置 (RH134 Chapter 10)
+====================================
+[student@workstation ~]$ lab boot-resetting start
+Set the root password for servera to redhat.
+
+
+建立使用者帳號 (RH124 Chapter 6)
+================================
+Create a user totoro with a user-id of 3179. The password for this user should be password.
+
+
+密碼政策的管理 (RH124 Chapter 6)
+================================
+All new local users should have passwords that expire after 168 days.
+
+
+設定 sudo 權限 (RH124 Chapter 6)
+================================
+Configure sudo privileges for group devops such that has the ability to execute administrative commands without providing a password. 
+
+
+使用者帳號及群組管理 (RH124 Chapter 6)
+======================================
+Create the following users, groups, and group memberships:
+A group named sysadms, GID  1400
+A user andy who belongs to sysadms as a secondary group, home directory is set at /netusers/andy 
+A user bill who also belongs to sysadms as a secondary group
+A user cindy who does not have access to an interactive shell on the system, and who is not a member of sysadms,
+andy , bill , and cindy should all have the password of password
+
+
+
+建立協同作業目錄 (RH124 Chapter 7)
+==================================
+Create a collaborative directory /home/sysadms with the following characteristics:
+Group ownership of /home/sysadms is sysadms
+The directory should be readable, writable, and accessible to members of sysadms , but not to any other user. (It is understood that root has access to all files and directories on the system)
+Files created in /home/sysadms automatically have group ownership set to the sysadms group 
+
+
+
+Default permission 的設定 (RH124 Chapter 7)
+===========================================
+Configure permissions for user bill such that:
+
+All newly created files for user bill should have -rw-r----- as the default permission
+All newly created directories for the same user should have drwxr-x--- as the default permission
+
+NTP的設定 (RH124 Chapter 11)
+============================
+Configure servera is an NTP client of classroom.example.com
+
+
+
+備份檔案的建立 (RH124 Chapter 13)
+=================================
+Create a tar archive named /root/archive.tar.bz2 which contains the content of /usr/local. This file must be compressed using bzip2.
+
+
+
+軟體倉儲的設定 (RH124 Chapter 14)
+=================================
+[root@servera ~]# rm -rf /etc/yum.repos.d/*
+Configure servera to use these locations as default repositories. 
+http://content.example.com/rhel8.2/x86_64/dvd/BaseOS
+http://content.example.com/rhel8.2/x86_64/dvd/AppStream
+
+
+
+檔案的搜尋 (RH124 Chapter 15)
+=============================
+Locate all the files owned by cindy and place a copy of them in the /root/findresults directory. 
+
+
+
+特定資料的搜尋 (RH134 Chapter 1)
+================================
+Find all lines in the file /usr/share/mime/packages/freedesktop.org.xml that contain the string ich. Put a copy of all these lines in the original order in the file /root/lines. /root/lines should contain no empty lines and all lines must be exact copies of the original lines in the original file.
+
+
+
+排程工作 (RH134 Chapter 2)
+==========================
+The user bill must configure a cron job that runs at 23:58 local time everyday and executes: /usr/bin/echo Hello
+
+Configure a cron job that runs every 2 minutes and executes: logger "EX200 is so easy" as the user cindy
+
+
+
+System tuning 的設定 (RH134 Chapter 3)
+======================================
+Choose the recommended tuned profile for your servera and set it as the default.
+
+
+
+ACL permission 的設定 (RH134 Chapter 4)
+=======================================
+Copy the file /etc/fstab to /var/tmp/fstab. Configure the permissions of /var/tmp/fstab:
+the file /var/tmp/fstab is owned by the root user
+the file /var/tmp/fstab belongs to the group root
+the file /var/tmp/fstab should not be executable by anyone
+the user andy is able to read and write /var/tmp/fstab
+the user bill can neither write nor read /var/tmp/fstab
+all other users (current or future) have the ability to read /var/tmp/fstab
+
+
+
+使用者家目錄的自動掛載 (RH134 Chapter 9)
+========================================
+[student@workstation ~]$ lab netstorage-nfs start
+Configure autofs to automount the home directories of remote users as follows:
+serverb.lab.example.com NFS-exports /shares to your system. This filesystem contains a pre-configured home directory for the user andy
+andy's home directory is serverb.lab.example.com:/shares/public
+andy's home directory should be automounted locally beneath /netusers as /netusers/andy
+home directories must be writable by their users
+andy's password is password
+
+
+
+SELinux 與 Firewall (RH134 Chapter 11)
+======================================
+[student@workstation ~]$ lab netsecurity-ports start
+A web server running on non-standard port 82 is having issues serving content. 
+Debug and fix the issues as necessary so that:
+The web server on your system can serve all the existing HTML files from /var/www/html(Note: Do not remove or otherwise alter the existing file content)
+The web server serves this content on port 82
+The web server starts automatically at system boot time 
+
+
+
+Container 的設定與管理 (RH134 Chapter 13)
+=========================================
+[student@workstation ~]$ lab containers-basic start
+Create a container named logsrv using the httpd-24(registry.lab.example.com/rhel8/httpd-24) image 
+that is available from your registry server
+Configure it to run as a systemd service that should run for the existing user student
+The service should be named container-logsrv and should automatically start after a system reboot
+
+Configure persistent storage for a container from the previous task:
+Create a directory on the container host named journal_local under /home/student
+Configure the container service to automatically mount the directory /home/student/journal_local under /var/log/journal on the container
+
+When the command:  logger -p user.info "EX200 is so easy"
+is run on the container the message "EX200 is so easy" should appear in both /var/log/journal/test.log on the container as well as in /home/student/journal_local/test.log on the container host. 
+
+ 
+
+網路組態設定 (RH124 Chapter 12)
+===============================
+Configure serverb to have the following network configuration:
+Hostname: serverb.lab.example.com
+IP address: 172.25.250.11
+Netmask: 255.255.255.0
+Gateway: 172.25.250.254
+Name server: 172.25.250.254
+可新增 Connection 後刪除舊有 Connection或直接修改現有的Connection
+
+
+
+設定一支簡易的程式 (RH134 Chapter 1)
+====================================
+Configure the application HAHAHA.sh such that when HAHAHA.sh is run as user student it displays the message
+
+EX200 is so easy
+
+
+
+建立一支搜尋檔案的 script (RH134 Chapter 1)
+===========================================
+Create a script named catchme.sh to locate files under /usr
+The script should locate all files under /usr which are larger than 30k and smaller than 10M in size and have set user ID (SETUID) permissions
+Place the script catchme.sh under /usr/local/bin
+When executed, the script should save the list of found files into /root/find_list
+
+
+
+建立 Swap space (RH134 Chapter 6)
+=================================
+[root@serverb ~]#
+執行 http://content.example.com/pub/disk.txt 檔案裡的所有指令
+
+Add an additional swap partition of 256MiB on serverb.
+The swap partition should automatically active when your system boots.
+Do not remove or alter any existing partitions and file system.
+
+
+
+Logical volume 的 Extending (RH134 Chapter 7)
+=============================================
+Resize the logical volume alien and its filesystem to 600 MiB. Make sure that the filesystem contents remain intact. Note: partitions are seldom exactly the same size requested, so a size within the range of 540 MiB to 660 MiB is acceptable.
+
+
+
+建立 Logical volume (RH134 Chapter 7)
+=====================================
+Create a new logical volume according to the following requirements:
+The logical volume is named avatar and belongs to the fox volume group and has a size of 50 extents
+Logical volumes in the fox volume group should have an extent size of 16 MiB
+Format the new logical volume with a vfat filesystem. The logical volume should be automatically mounted under /mnt/avatar at system boot time 
+
+
+
+建立 VDO volume (RH134 Chapter 8)
+=================================
+Create a new VDO volume according to the following requirements:
+Use the unpartitioned disk
+The volume is named starwar
+The volume has a logical size of 50G
+The volume is formatted with the xfs filesystem
+The volume is mounted (at boot time) under /mnt/startrek

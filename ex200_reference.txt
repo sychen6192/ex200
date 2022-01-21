@@ -1,0 +1,307 @@
+
+
+	[root@servera ~]# useradd -u 3179 totoro	[root@servera ~]# id totoro
+
+
+	vim /etc/login.defs	    PASS_MAX_DAYS	99999  ->  168
+
+
+	[root@servera ~]# grep wheel /etc/sudoers
+	[root@servera ~]# vim /etc/sudoers.d/devops
+	         %devops	ALL=(ALL)	NOPASSWD: ALL
+
+
+
+	[root@servera ~]# groupadd -g 1400 sysadms	[root@servera ~]# useradd -G 1400 -d /netusers/andy andy	[root@servera ~]# useradd -G 1400 bill	[root@servera ~]# useradd -s /sbin/nologin cindy		[root@servera ~]# echo password | passwd --stdin andy	[root@servera ~]# echo password | passwd --stdin bill	[root@servera ~]# echo password | passwd --stdin cindy
+
+
+	[root@servera ~]# mkdir /home/sysadms	[root@servera ~]# chgrp sysadms /home/sysadms	[root@servera ~]# chmod 770 /home/sysadms	[root@servera ~]# chmod g+s /home/sysadms	[root@servera ~]# 	[root@servera ~]# ls -ld /home/sysadms
+
+
+
+	[root@servera ~]# su - bill	[bill@servera ~]$ vim .bashrc	      umask 027
+
+
+
+	[root@servera ~]# vim /etc/chrony.conf	     server classroom.example.com iburst	[root@servera ~]# systemctl restart chronyd.service
+
+
+
+	[root@servera ~]# tar -cjf /root/archive.tar.bz2 /usr/local/
+
+
+
+	[root@servera ~]# vim /etc/yum.repos.d/exam.repo		[BaseOS]	name=BaseOS	baseurl=http://content.example.com/rhel8.2/x86_64/dvd/BaseOS	enabled=1	gpgcheck=0		[APP]	name=APP	baseurl=http://content.example.com/rhel8.2/x86_64/dvd/AppStream	enabled=1	gpgcheck=0
+
+
+
+	[root@servera ~]# find / -user cindy -type f    2> /dev/null  (一個一個檔案複製)
+	[root@servera ~]# find / -user cindy -type f -exec cp {} /root/findresults/ \;    2> /dev/null (-exec 選項)
+
+	請使用Windows作業系統裡的	遠端桌面連線		帳號: kiosk	密碼: redhat		練習過程中請勿改變密碼	請勿改變 foundation 實體機系統的IP組態設定		結束Remote LAB請勿直接關機	也請勿直接關閉遠端桌面連線視窗	請使用 Log Out 的方式登出遠端桌面連線
+
+	練習時有連線被卡住的問題	可以寄電子郵件給我	我看到郵件會馬上處理	lesliemao@uuu.com.tw
+
+
+
+
+	grep 'ich' /usr/share/mime/packages/freedesktop.org.xml > /root/lines
+
+
+	[root@servera ~]# su - bill	[bill@servera ~]$ 	[bill@servera ~]$ crontab -e	[bill@servera ~]$ crontab -l	58 23 * * * /usr/bin/echo Hello
+
+
+
+
+	[root@servera ~]# vim /etc/cron.d/cindy	[root@servera ~]# cat /etc/cron.d/cindy	*/2 * * * * cindy logger "EX200 is so easy"
+
+
+
+	[root@servera ~]# tuned-adm recommend 	virtual-guest	[root@servera ~]# 	[root@servera ~]# tuned-adm active	Current active profile: balanced	[root@servera ~]# 	[root@servera ~]# tuned-adm profile virtual-guest	[root@servera ~]# 	[root@servera ~]# tuned-adm active	Current active profile: virtual-guest
+
+
+
+
+	[root@servera ~]# cp /etc/fstab /var/tmp	[root@servera ~]# ls -l /var/tmp/fstab	-rw-r--r--. 1 root root 534 Jan 15 13:21 /var/tmp/fstab	[root@servera ~]# 	[root@servera ~]# setfacl -m u:andy:rw,u:bill:- /var/tmp/fstab	[root@servera ~]# getfacl /var/tmp/fstab
+
+
+
+	[root@servera ~]# yum -y install autofs
+	[root@servera ~]# vim /etc/auto.master.d/andy.autofs	      /netusers       /etc/auto.andy	[root@servera ~]# vim /etc/auto.andy	      andy    -rw     serverb.lab.example.com:/shares/public
+	[root@servera ~]# systemctl enable --now autofs
+
+
+
+	[root@servera ~]# semanage port -l | grep http
+	http_port_t                    tcp      80, 81, 443, 488, 8008, 8009, 8443, 9000
+	[root@servera ~]# 
+	[root@servera ~]# semanage port -a -t http_port_t -p tcp 82
+	[root@servera ~]# semanage port -l | grep http
+	http_port_t                    tcp      82, 80, 81, 443, 488, 8008, 8009, 8443, 9000
+	
+	[root@servera ~]# systemctl enable --now httpd
+	
+	[root@servera ~]# firewall-cmd --add-port=82/tcp
+	[root@servera ~]# firewall-cmd --add-port=82/tcp --permanent
+
+
+
+[root@servera ~]# yum -y module install container-tools
+
+極重要 務必登出 root 帳號，直接以 student 帳號 登入
+[student@servera ~]$
+
+podman login registry.lab.example.com
+帳號 admin ， 密碼 redhat321
+
+podman search ubi
+podman images
+podman pull registry.lab.example.com/rhel8/httpd-24
+podman images
+
+mkdir journal_local
+podman run --name logsrv -v /home/student/journal_local:/var/log/journal:Z -d registry.lab.example.com/rhel8/httpd-24
+podman ps -a
+
+podman exec -it -u root logsrv /bin/bash
+	vim /etc/systemd/journald.conf
+	      Storage=auto  ->  Storage=persistent
+	exit
+podman restart logsrv
+
+podman exec -it -u root logsrv /bin/bash
+	考試時請執行題目要求的指令
+	練習時可使用 echo 指令測試
+	echo 'EX200 is so easy' > /var/log/journal/test.log
+	exit
+
+ls -l journal_local/
+cat journal_local/test.log 
+
+
+mkdir -p .config/systemd/user
+cd .config/systemd/user
+podman generate systemd --name logsrv 
+podman generate systemd --name logsrv --files
+podman stop logsrv 
+
+podman ps
+systemctl --user daemon-reload
+systemctl --user enable --now container-logsrv.service 
+systemctl --user status container-logsrv.service 
+podman ps
+loginctl enable-linger  (收尾動作記得要執行)
+
+sudo reboot  (reboot 系統後重新檢查)
+podman ps
+==== 到此應該已經可以結束了========
+
+若考試環境發覺container沒有執行
+[student@servera ~] $
+vim .bashrc
+   systemctl --user start container-logsrv.service
+
+
+
+
+
+	[root@serverb ~]# hostnamectl set-hostname serverb.lab.example.com
+	[root@serverb ~]# cat /etc/hostname
+	serverb.lab.example.com
+	
+	[root@serverb ~]# nmcli connection show
+	NAME                UUID                                  TYPE      DEVICE 
+	Wired connection 1  81b08161-8925-3cb9-a94c-e3c827e2adc3  ethernet  eth0   
+	
+	[root@serverb ~]# nmcli con add con-name exam ifname eth0 type ethernet ipv4.method manual ipv4.addresses 172.25.250.11/24 ipv4.gateway 172.25.250.254 ipv4.dns 172.25.250.254
+	
+	[root@serverb ~]# nmcli connection up exam
+	[root@serverb ~]# nmcli connection delete Wired\ connection\ 1 
+	[root@serverb ~]# nmcli connection show
+	NAME  UUID                                  TYPE      DEVICE 
+	exam  6e17956e-1085-456d-b33c-92b1198ff833 
+
+
+
+
+
+	[root@serverb ~]# vim /usr/local/bin/HAHAHA.sh
+	
+	#!/bin/bash
+	
+	if [ $(id -un) == student ] ; then
+		echo 'EX200 is so easy'
+	fi
+	
+	[root@serverb ~]# chmod a+x /usr/local/bin/HAHAHA.sh
+
+
+
+
+
+	[root@serverb ~]# vim /usr/local/bin/catchme.sh
+	
+	#!/bin/bash
+	find /usr -size +30k -size -10M -perm /4000 > /root/find_list
+
+	[root@serverb ~]# chmod a+x /usr/local/bin/catchme.sh
+
+
+
+
+	[root@serverb ~]# lsblk -f
+	[root@serverb ~]# parted /dev/vdb unit MiB print
+	[root@serverb ~]# parted /dev/vdb mkpart swap1 linux-swap 1025MiB 1281MiB
+	[root@serverb ~]# mkswap /dev/vdb2
+	[root@serverb ~]# vim /etc/fstab
+	   UUID=XXXXXXXXXXXXXXXX   swap  swap   defaults             0 0
+	[root@serverb ~]# free -h
+	[root@serverb ~]# swapon -a
+	[root@serverb ~]# free -h
+
+
+
+	[root@serverb ~]# lvs
+	  LV    VG       Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+	  alien predator -wi-ao---- 400.00m                                                    
+	[root@serverb ~]# df -h
+	Filesystem                  Size  Used Avail Use% Mounted on
+	/dev/mapper/predator-alien  395M   24M  372M   6% /mnt/alien
+	
+	[root@serverb ~]# vgs
+	  VG       #PV #LV #SN Attr   VSize    VFree  
+	  predator   1   1   0 wz--n- 1020.00m 620.00m
+	
+	[root@serverb ~]# lvextend -L 600m -r /dev/predator/alien 
+	
+	[root@serverb ~]# lvs
+	  LV    VG       Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+	  alien predator -wi-ao---- 600.00m                                                    
+	[root@serverb ~]# df -h
+	Filesystem                  Size  Used Avail Use% Mounted on
+	/dev/mapper/predator-alien  595M   25M  571M   5% /mnt/alien
+	
+	[root@serverb ~]# vgs
+	  VG       #PV #LV #SN Attr   VSize    VFree  
+	  predator   1   1   0 wz--n- 1020.00m 420.00m
+
+
+
+
+
+	[root@serverb ~]# parted /dev/vdb unit MiB print
+	Number  Start    End      Size     File system     Name   Flags
+	 1      1.00MiB  1025MiB  1024MiB                  pv1    lvm
+	 2      1025MiB  1281MiB  256MiB   linux-swap(v1)  swap1  swap
+	
+	[root@serverb ~]# parted /dev/vdb mkpart pv2 1281MiB 2305MiB
+	
+	[root@serverb ~]# parted /dev/vdb set 3 lvm on
+	
+	[root@serverb ~]# parted /dev/vdb unit MiB print              
+	Number  Start    End      Size     File system     Name   Flags
+	 1      1.00MiB  1025MiB  1024MiB                  pv1    lvm
+	 2      1025MiB  1281MiB  256MiB   linux-swap(v1)  swap1  swap
+	 3      1281MiB  2305MiB  1024MiB                  pv2    lvm
+
+
+	[root@serverb ~]# pvs
+	  PV         VG       Fmt  Attr PSize    PFree  
+	  /dev/vdb1  predator lvm2 a--  1020.00m 420.00m
+	
+	[root@serverb ~]# pvcreate /dev/vdb3
+	  Physical volume "/dev/vdb3" successfully created.
+	
+	[root@serverb ~]# pvs
+	  PV         VG       Fmt  Attr PSize    PFree  
+	  /dev/vdb1  predator lvm2 a--  1020.00m 420.00m
+	  /dev/vdb3           lvm2 ---     1.00g   1.00g
+	
+	[root@serverb ~]# vgcreate -s 16m fox /dev/vdb3
+	  Volume group "fox" successfully created
+
+	[root@serverb ~]# pvs
+	  PV         VG       Fmt  Attr PSize    PFree   
+	  /dev/vdb1  predator lvm2 a--  1020.00m  420.00m
+	  /dev/vdb3  fox      lvm2 a--  1008.00m 1008.00m
+	
+	[root@serverb ~]# vgdisplay fox
+	  --- Volume group ---
+	  VG Name               fox
+	   VG Size               1008.00 MiB
+	  PE Size               16.00 MiB
+	  Total PE              63
+	  Alloc PE / Size       0 / 0   
+	  Free  PE / Size       63 / 1008.00 MiB
+	
+	[root@serverb ~]# lvs
+	[root@serverb ~]# lvcreate -n avatar -l 50 fox
+	[root@serverb ~]# lvs
+
+
+
+	[root@serverb ~]# mkfs.vfat /dev/fox/avatar 
+	mkfs.fat 4.1 (2017-01-24)
+	[root@serverb ~]# mkdir /mnt/avatar
+	[root@serverb ~]# vim /etc/fstab
+	    /dev/fox/avatar		/mnt/avatar	vfat	defaults	0 0
+	
+	[root@serverb ~]# mount -a
+	[root@serverb ~]# df -h
+
+
+
+
+	[root@serverb ~]# yum -y install vdo
+	[root@serverb ~]# systemctl enable --now vdo.service
+	[root@serverb ~]# vdo create --name starwar --device /dev/vdc --vdoLogicalSize 50G
+	[root@serverb ~]# mkfs.xfs /dev/mapper/startwar
+	[root@serverb ~]# lsblk -f /dev/mapper/startwar
+
+	[root@serverb ~]# mkdir /mnt/startrek
+	[root@serverb ~]# vim /etc/fstab
+		UUID=XXXXXX     /mnt/startrek    xfs   defaults,x-systemd.requires=vdo.service    0  0
+                                                                                                                                       極重要
+	[root@serverb ~]# mount -a
+	[root@serverb ~]# df -h
+	[root@serverb ~]# reboot
